@@ -4,7 +4,7 @@ import { computeHash } from '../logic/hashCalculator';
 import { CopyButton } from '../../../components/ui/CopyButton';
 import { ClearButton } from '../../../components/ui/ClearButton';
 import { WarningMessage } from '../../../components/ui/WarningMessage';
-import { Hash, ShieldAlert, Sparkles, KeyRound } from 'lucide-react';
+import { Hash, ShieldAlert, KeyRound } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 const ALGORITHMS: Array<{ id: HashAlgorithm; name: string; bits: number; desc: string; weak?: boolean }> = [

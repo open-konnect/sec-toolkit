@@ -1,6 +1,4 @@
-import { CronParseResult, CronScheduleOption } from '../types';
-
-const DAYS_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+import { CronScheduleOption } from '../types';
 
 /**
  * Builds standard 5-part cron string from structured option.

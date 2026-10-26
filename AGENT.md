@@ -6,11 +6,11 @@ Welcome, AI coding assistant or autonomous agent. This document provides complet
 
 ## 1. Project Overview & Ethos
 
-**Developer Security Toolkit** is an extensible, privacy-first web application providing free developer and security utilities. 
+**Developer Security Toolkit** is an extensible, privacy-first web application providing **15 free developer and security browser-based utilities**.
 
 ### Core Ethos & Non-Negotiable Rules:
-- **100% Client-Side Processing**: All processing occurs strictly inside the user's browser using native Web APIs (`crypto.randomUUID()`, `crypto.getRandomValues()`, `TextEncoder`, `TextDecoder`, `JSON.parse`).
-- **Zero Data Transmission**: User inputs (tokens, Base64 strings, keys, secrets) **must never** be uploaded to any server, stored in cookies, or sent to telemetry/analytics.
+- **100% Client-Side Processing**: All processing occurs strictly inside the user's browser using native Web APIs (`crypto.subtle`, `crypto.randomUUID()`, `crypto.getRandomValues()`, `TextEncoder`, `TextDecoder`, `JSON.parse`).
+- **Zero Data Transmission**: User inputs (tokens, Base64 strings, keys, secrets, passwords) **must never** be uploaded to any server, stored in cookies, or sent to telemetry/analytics.
 - **Static Frontend Only**: Built using React, TypeScript, Vite, and Tailwind CSS. Deployable to Cloudflare Pages as a static site (`npm run build` produces `dist/`). Zero backend servers, Express, Docker, Redis, or serverless functions.
 - **Defensive Engineering**: Protect against browser freezing and crashes using input size limits (`validateInputSize`) and safe parsers (`safeJsonParse`, `safeBase64Decode`). Never use `eval()` or `dangerouslySetInnerHTML`.
 
@@ -23,7 +23,7 @@ Welcome, AI coding assistant or autonomous agent. This document provides complet
 - **Build Tool**: Vite 6
 - **Styling**: Tailwind CSS 3 (dark mode enabled by default)
 - **Icons**: `lucide-react`
-- **Testing**: Vitest 2
+- **Testing**: Vitest 5
 
 ### Common CLI Commands:
 ```bash
@@ -48,7 +48,29 @@ npm run preview
 
 ---
 
-## 3. Project Structure
+## 3. All 15 Tools
+
+| # | Tool | Route | Category |
+|---|------|--------|----------|
+| 1 | JWT Decoder & Security Analyzer | `/jwt-decoder` | Security |
+| 2 | Base64 Encoder / Decoder | `/base64` | Encoding |
+| 3 | UUID Generator | `/uuid-generator` | Developer |
+| 4 | JSON Formatter & Validator | `/json-formatter` | Data |
+| 5 | Hash Generator | `/hash-generator` | Security |
+| 6 | URL Encoder / Decoder | `/url-encoder` | Encoding |
+| 7 | Timestamp Converter | `/timestamp-converter` | Developer |
+| 8 | Regex Tester | `/regex-tester` | Developer |
+| 9 | Cron Expression Generator | `/cron-generator` | Developer |
+| 10 | JWT Generator | `/jwt-generator` | Security |
+| 11 | JSON → TypeScript Converter | `/json-to-typescript` | Data |
+| 12 | CSP Generator | `/csp-generator` | Security |
+| 13 | Security Headers Analyzer | `/security-headers` | Security |
+| 14 | Password Strength Analyzer | `/password-strength` | Security |
+| 15 | LLM Token Calculator | `/llm-token-calculator` | AI |
+
+---
+
+## 4. Project Structure
 
 ```text
 sec-toolkit/
@@ -60,31 +82,56 @@ sec-toolkit/
 │   │   ├── App.tsx           # BrowserRouter mount
 │   │   └── routes.tsx        # Dynamic route dispatcher & scroll-to-top handler
 │   ├── components/
-│   │   ├── layout/           # Navbar, Footer, Layout wrapper
-│   │   ├── tool/             # ToolHeader, ToolCard, SecurityFinding, EducationalSection, SEOHead
-│   │   └── ui/               # Button, Badge, CodeBlock, CopyButton, ClearButton, JsonViewer, AdSlot
+│   │   ├── layout/           # Navbar (with category nav), Footer, Layout wrapper
+│   │   ├── tool/             # ToolHeader, ToolCard (with iconName), Breadcrumbs, RelatedTools, SecurityFinding, SEOHead
+│   │   └── ui/               # Button, Badge, CodeBlock, CopyButton, ClearButton, JsonViewer, AdSlot, WarningMessage, ErrorMessage
 │   ├── lib/
 │   │   ├── analytics/        # Privacy-first pluggable analytics interface (no-op by default)
 │   │   ├── formatting/       # Timestamp conversions, duration math, clipboard copy
-│   │   └── security/         # Safe Base64/JSON parsers, input size limits
+│   │   └── security/         # Safe Base64/JSON parsers, safeBase64Encode, base64ToBase64Url, input size limits
 │   ├── pages/
-│   │   ├── HomePage.tsx      # Tool directory, search, category filter, privacy guarantee
-│   │   ├── ToolPage.tsx      # Dynamic tool renderer with automated SEO and FAQs
+│   │   ├── HomePage.tsx      # Tool directory with featured section, category filter (?category=), search, privacy guarantee
+│   │   ├── ToolPage.tsx      # Dynamic tool renderer with Breadcrumbs, RelatedTools, SEO
 │   │   └── NotFoundPage.tsx  # 404 handler with quick navigation
 │   ├── tools/
-│   │   ├── registry.ts       # Central tool registry and category configuration
-│   │   ├── jwt/              # Flagship JWT Analyzer module (components, logic, types, metadata)
-│   │   ├── base64/           # Base64 Converter module (components, logic, types, metadata)
-│   │   └── uuid/             # UUID Generator module (components, logic, types, metadata)
+│   │   ├── registry.ts       # Central tool registry: REGISTERED_TOOLS, TOOL_CATEGORIES, getFeaturedTools(), getToolById(), getRelatedTools()
+│   │   ├── jwt/              # JWT Decoder & Analyzer (components, logic, types, metadata)
+│   │   ├── base64/           # Base64 Converter (components, logic, types, metadata)
+│   │   ├── uuid/             # UUID Generator (components, logic, types, metadata)
+│   │   ├── json-formatter/   # JSON Formatter & Validator (components, logic, types, metadata)
+│   │   ├── hash-generator/   # Hash Generator — SHA-256/384/512/SHA-1 via crypto.subtle (async)
+│   │   ├── url-encoder/      # URL Encoder / Decoder (URI + component modes)
+│   │   ├── timestamp-converter/ # Epoch ↔ Date, ISO 8601, UTC, local time
+│   │   ├── regex-tester/     # Regex match, capture groups, replace mode, preset patterns
+│   │   ├── cron-generator/   # Visual cron builder, human description, next-run preview
+│   │   ├── jwt-generator/    # HMAC HS256/384/512 JWT signing via crypto.subtle (async)
+│   │   ├── json-to-typescript/ # JSON → TypeScript interface/type inference
+│   │   ├── csp-generator/    # CSP header builder with security audit warnings
+│   │   ├── security-headers/ # HSTS, nosniff, X-Frame, COOP, CORP — Nginx/Apache/Cloudflare export
+│   │   ├── password-strength/ # Entropy analysis, pattern detection (passwords never transmitted)
+│   │   └── llm-token-calculator/ # BPE token estimation, editable pricing, 6 model presets
 │   ├── types/
-│   │   └── index.ts          # Shared TypeScript contracts and tool definitions
+│   │   └── index.ts          # Shared TypeScript contracts: ToolDefinition, ToolCategory, etc.
 │   ├── vite-env.d.ts         # Vite client types
 │   ├── index.css             # Tailwind base styles and dark mode variables
 │   └── main.tsx              # Application DOM entry point
 ├── tests/                    # Automated unit tests for all core logic
-│   ├── jwt.test.ts           # JWT decoding and security heuristics tests
-│   ├── base64.test.ts        # UTF-8, Base64URL, and malformed handling tests
-│   └── uuid.test.ts          # CSPRNG, RFC v4 format, bulk uniqueness tests
+│   ├── jwt.test.ts
+│   ├── base64.test.ts
+│   ├── uuid.test.ts
+│   ├── json-formatter.test.ts
+│   ├── hash-generator.test.ts
+│   ├── url-encoder.test.ts
+│   ├── timestamp-converter.test.ts
+│   ├── regex-tester.test.ts
+│   ├── cron-generator.test.ts
+│   ├── json-to-typescript.test.ts
+│   ├── csp-generator.test.ts
+│   ├── password-strength.test.ts
+│   └── llm-token-calculator.test.ts
+├── AGENT.md                  # This file — full architecture guide for AI agents
+├── CLAUDE.md                 # Compact quick-reference for Claude/AI assistants
+├── README.md                 # User-facing documentation
 ├── package.json
 ├── tailwind.config.js
 ├── tsconfig.json
@@ -93,11 +140,12 @@ sec-toolkit/
 
 ---
 
-## 4. Key Architectural Patterns
+## 5. Key Architectural Patterns
 
 ### A. Modular Tool Registry (`src/tools/registry.ts`)
 Do NOT hardcode routes or implement giant conditional branches (`if (tool === 'jwt') ...`).
-Every tool conforms to the `ToolDefinition` interface:
+Every tool conforms to the `ToolDefinition` interface in `src/types/index.ts`:
+
 ```typescript
 interface ToolDefinition {
   id: string;
@@ -105,8 +153,11 @@ interface ToolDefinition {
   name: string;
   shortDescription: string;
   description: string;
-  category: 'security' | 'data' | 'developer' | 'ai';
+  category: ToolCategory;          // 'security' | 'data' | 'developer' | 'encoding' | 'ai'
   badge?: string;
+  featured?: boolean;              // Shown in homepage featured section
+  iconName?: string;               // Lucide icon name string (mapped in ToolCard)
+  relatedTools?: string[];         // Array of tool IDs for RelatedTools component
   keywords: string[];
   component: React.ComponentType;
   seo: {
@@ -117,11 +168,19 @@ interface ToolDefinition {
   educationalContent?: EducationalSectionData;
 }
 ```
-All tools are registered in the `REGISTERED_TOOLS` array in `src/tools/registry.ts`. The homepage cards, search filters, routing, and SEO automatically populate from this registry.
+
+**ToolCategory** values: `'security' | 'data' | 'developer' | 'encoding' | 'ai'`
+
+Registry helpers available from `src/tools/registry.ts`:
+- `REGISTERED_TOOLS` — array of all 15 tools
+- `TOOL_CATEGORIES` — array of category metadata (id, label, description, icon)
+- `getFeaturedTools()` — returns tools where `featured === true`
+- `getToolById(id)` — lookup a tool by its id
+- `getRelatedTools(tool, count)` — returns related tools based on `relatedTools` field
 
 ### B. Pure Logic Decoupled from UI
 For every tool, keep core algorithmic logic in `src/tools/<tool-name>/logic/` separate from React components:
-- `logic/`: Pure TypeScript functions (e.g. `parseJwt`, `convertBase64`, `generateBulkUuids`). No React dependencies, zero hooks. This makes all business and cryptographic logic 100% unit-testable via Vitest.
+- `logic/`: Pure TypeScript functions. No React dependencies, zero hooks. 100% unit-testable via Vitest.
 - `components/`: Pure presentation, state, and event handling.
 
 ### C. Safe Parsing & Input Limits
@@ -135,7 +194,34 @@ if (!sizeCheck.valid) {
 }
 ```
 
-### D. Security Finding 3-Part Structure
+Additional security helpers in `src/lib/security/safeParser.ts`:
+- `safeBase64Encode(input)` — URL-safe Base64 encoding without padding
+- `base64ToBase64Url(b64)` — converts standard Base64 to Base64URL
+
+### D. Async Crypto Operations
+Two tools use `crypto.subtle` and return Promises:
+- **Hash Generator** — `computeHash(text, algorithm)` is `async`
+- **JWT Generator** — `generateJwt(params)` is `async`
+
+In components, handle these with `useEffect` + `useState` or `.then()`.
+
+### E. Icon System
+`ToolCard` and the icon system use a string-based `iconName` field (e.g. `'Shield'`, `'Hash'`, `'Clock'`).
+The `ToolCard` component maps these strings to Lucide icon components internally.
+Missing `iconName` falls back to `<Wrench>`.
+
+### F. Homepage & Navigation
+- Homepage URL: `/?category=security` filters by category
+- Navbar links go to `/?category=<id>` (not separate routes)
+- `useSearchParams()` from react-router-dom v7 is used in both `HomePage.tsx` and `Navbar.tsx`
+- Featured tools appear in a dedicated section at the top of the homepage
+
+### G. Breadcrumbs & Related Tools
+`ToolPage.tsx` renders:
+- `<Breadcrumbs>` — Home / Category / Tool Name navigation
+- `<RelatedTools>` — 2–4 linked sibling tools at the bottom of each tool page
+
+### H. Security Finding 3-Part Structure
 When implementing security or analysis findings (as in the JWT Analyzer), always provide the 3-part structure:
 1. `what`: What was detected
 2. `why`: Why it may matter
@@ -143,9 +229,9 @@ When implementing security or analysis findings (as in the JWT Analyzer), always
 
 ---
 
-## 5. How to Add a New Tool (Agent Checklist)
+## 6. How to Add a New Tool (Agent Checklist)
 
-When asked to add a new tool (e.g. `json-formatter`, `hash-generator`, `csp-generator`):
+When asked to add a new tool (e.g. `sql-formatter`, `whois-lookup`):
 
 1. **Create Tool Directory**: `src/tools/<tool-id>/`
    - `types.ts`: Define inputs, options, results.
@@ -165,26 +251,26 @@ When asked to add a new tool (e.g. `json-formatter`, `hash-generator`, `csp-gene
      - Unicode/UTF-8 handling (if string transformation)
 
 4. **Verify Everything**:
-   - Run `npm test` -> must pass with zero failures.
-   - Run `npm run build` -> TypeScript compiler (`tsc`) must succeed with zero warnings/errors.
+   - Run `npm test` → must pass with zero failures.
+   - Run `npm run build` → TypeScript compiler (`tsc`) must succeed with zero errors.
 
 ---
 
-## 6. Code Style & Quality Guidelines
+## 7. Code Style & Quality Guidelines
 
 - **TypeScript**: Strict mode is enabled. Do not leave unused imports or unused variables (TS will reject `npm run build`). Avoid `any` types.
 - **React Components**: Use functional components with `React.FC`. Use semantic HTML elements (`<section>`, `<label>`, `<header>`, `<footer>`, `<button>`).
 - **Styling**: Use Tailwind CSS utility classes. Stick to the dark/neutral developer aesthetic (`slate-900`, `slate-950`, `emerald-500`, `emerald-400`).
 - **Accessible Controls**: All icon-only buttons must have `aria-label` and `title` attributes. Provide visible focus rings (`focus:ring-2 focus:ring-emerald-500`).
 - **Clipboard**: Always use `src/lib/formatting/clipboard.ts` (`copyToClipboard`) or `CopyButton` component.
-- **Analytics**: Never pass user-supplied data to `analytics.track()`. Use metadata events only.
+- **Analytics**: Never pass user-supplied data to `analytics.track()`. Use metadata events only (e.g. `{ action: 'input_change' }` with no value payload). This is especially critical for password, JWT, and key inputs.
 
 ---
 
-## 7. Cloudflare Pages Deployment Note
+## 8. Cloudflare Pages Deployment Note
 
 Cloudflare Pages serves the static output from `dist/`. The single-page app rewrite is handled by `public/_redirects`:
 ```text
 /* /index.html 200
 ```
-This guarantees direct URL navigation to any tool (`/jwt-decoder`, `/base64`, `/uuid-generator`, etc.) works seamlessly without server-side routing.
+This guarantees direct URL navigation to any tool (`/jwt-decoder`, `/base64`, `/uuid-generator`, `/hash-generator`, etc.) works seamlessly without server-side routing.

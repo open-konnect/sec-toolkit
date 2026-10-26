@@ -6,7 +6,7 @@ import { CopyButton } from '../../../components/ui/CopyButton';
 import { ClearButton } from '../../../components/ui/ClearButton';
 import { ErrorMessage } from '../../../components/ui/ErrorMessage';
 import { WarningMessage } from '../../../components/ui/WarningMessage';
-import { KeyRound, ShieldAlert, Sparkles, ExternalLink, Lock } from 'lucide-react';
+import { KeyRound, ExternalLink, Lock } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 export const JwtGeneratorTool: React.FC = () => {

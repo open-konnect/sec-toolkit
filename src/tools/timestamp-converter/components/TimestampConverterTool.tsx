@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { parseEpoch, parseDateString } from '../logic/timestampConverter';
 import { TimestampConversionDetails } from '../types';
 import { CopyButton } from '../../../components/ui/CopyButton';
-import { Clock, Calendar, RefreshCw, Sparkles } from 'lucide-react';
+import { Clock, Calendar, RefreshCw } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 export const TimestampConverterTool: React.FC = () => {

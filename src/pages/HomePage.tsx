@@ -19,8 +19,8 @@ import {
   Database, 
   Terminal, 
   Sparkles,
-  Lock,
-  ArrowRight
+  Lock
+
 } from 'lucide-react';
 
 export const HomePage: React.FC = () => {

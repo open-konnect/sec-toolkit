@@ -3,7 +3,7 @@ import { analyzePassword } from '../logic/passwordAnalyzer';
 import { PasswordStrengthLevel } from '../types';
 import { ClearButton } from '../../../components/ui/ClearButton';
 import { WarningMessage } from '../../../components/ui/WarningMessage';
-import { ShieldCheck, ShieldAlert, KeyRound, Eye, EyeOff, Lock, CheckCircle2 } from 'lucide-react';
+import { KeyRound, Eye, EyeOff, Lock } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 const STRENGTH_CONFIG: Record<PasswordStrengthLevel, { label: string; color: string; bg: string; width: string }> = {

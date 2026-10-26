@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { DEFAULT_SECURITY_HEADERS, buildSecurityHeadersConfig } from '../logic/securityHeadersBuilder';
 import { SecurityHeaderItem, HeaderPlatform } from '../types';
 import { CopyButton } from '../../../components/ui/CopyButton';
-import { ShieldCheck, Server, Sparkles } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 export const SecurityHeadersTool: React.FC = () => {

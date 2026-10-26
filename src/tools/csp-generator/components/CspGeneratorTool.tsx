@@ -3,7 +3,7 @@ import { CspDirectiveName } from '../types';
 import { buildCspPolicy, CSP_DIRECTIVE_DEFINITIONS } from '../logic/cspBuilder';
 import { CopyButton } from '../../../components/ui/CopyButton';
 import { WarningMessage } from '../../../components/ui/WarningMessage';
-import { Shield, ShieldAlert, Sparkles, Plus, X, Code } from 'lucide-react';
+import { Shield, Sparkles, Plus, X } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 const INITIAL_DIRECTIVES: Record<CspDirectiveName, string[]> = {

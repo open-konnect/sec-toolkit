@@ -1,4 +1,4 @@
-import { JwtGenerateParams, JwtGenerateResult, JwtSignAlgorithm } from '../types';
+import { JwtGenerateParams, JwtGenerateResult } from '../types';
 import { safeBase64Encode, base64ToBase64Url } from '../../../lib/security/safeParser';
 
 const HASH_MAP: Record<string, string> = {

@@ -3,7 +3,7 @@ import { buildCronFromOption, explainCron, getNextExecutions } from '../logic/cr
 import { CronScheduleOption } from '../types';
 import { CopyButton } from '../../../components/ui/CopyButton';
 import { ErrorMessage } from '../../../components/ui/ErrorMessage';
-import { Calendar, Clock, Terminal, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Clock, CheckCircle2 } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 export const CronGeneratorTool: React.FC = () => {

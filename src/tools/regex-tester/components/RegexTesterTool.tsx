@@ -3,7 +3,7 @@ import { testRegex } from '../logic/regexMatcher';
 import { CopyButton } from '../../../components/ui/CopyButton';
 import { ClearButton } from '../../../components/ui/ClearButton';
 import { ErrorMessage } from '../../../components/ui/ErrorMessage';
-import { Search, Sparkles, ArrowRightLeft, Layers } from 'lucide-react';
+import { Search, Sparkles, ArrowRightLeft } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 const PRESET_PATTERNS = [

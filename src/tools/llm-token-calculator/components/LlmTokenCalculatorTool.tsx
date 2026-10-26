@@ -3,7 +3,7 @@ import { POPULAR_LLM_MODELS, estimateTokens, calculateLlmCost } from '../logic/t
 import { LlmModelPreset } from '../types';
 import { CopyButton } from '../../../components/ui/CopyButton';
 import { ClearButton } from '../../../components/ui/ClearButton';
-import { Sparkles, DollarSign, Cpu, FileText, Lock } from 'lucide-react';
+import { Cpu, FileText, Lock } from 'lucide-react';
 import { analytics } from '../../../lib/analytics';
 
 const SAMPLE_PROMPT = `You are a senior security engineer conducting an audit of a microservice authentication architecture.
