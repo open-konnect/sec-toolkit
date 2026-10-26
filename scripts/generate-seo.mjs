@@ -11,13 +11,18 @@
  * bundle, so titles, descriptions, and URLs are never duplicated here.
  */
 
-import { readFile, writeFile, access, rm } from 'node:fs/promises';
+import { readFile, writeFile, access, rm, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const distDir = path.join(root, 'dist');
-const ssrEntry = path.join(root, 'dist-ssr', 'prerender.js');
+const ssrDir = path.join(root, 'dist-ssr');
+
+// `vite.ssr.config.ts` pins the entry filename to `prerender.js`. Keep the
+// other extensions as a fallback so a local/manual SSR build that follows
+// Node's ESM naming rules still works instead of failing on a stale path.
+const SSR_ENTRY_NAMES = ['prerender.js', 'prerender.mjs', 'prerender.cjs'];
 
 function escapeXml(value) {
   return value
@@ -41,10 +46,41 @@ async function exists(file) {
   }
 }
 
-async function main() {
-  if (!(await exists(ssrEntry))) {
-    throw new Error(`SSR bundle not found at ${ssrEntry}. Run "vite build --ssr src/seo/prerender.tsx --outDir dist-ssr" first.`);
+async function resolveSsrEntry() {
+  for (const name of SSR_ENTRY_NAMES) {
+    const candidate = path.join(ssrDir, name);
+    if (await exists(candidate)) {
+      return candidate;
+    }
   }
+
+  let contents = [];
+  try {
+    contents = (await readdir(ssrDir)).sort();
+  } catch {
+    // The directory itself is missing; the message below covers that case.
+  }
+
+  throw new Error(
+    [
+      `SSR bundle not found in ${ssrDir}.`,
+      `Expected one of: ${SSR_ENTRY_NAMES.join(', ')}.`,
+      `Directory contents: ${contents.length > 0 ? contents.join(', ') : '(missing or empty)'}`,
+      'Run "npm run build:ssr" before "node scripts/generate-seo.mjs".',
+      'On Cloudflare Pages the build command must be "npm run build" and the output directory "dist".'
+    ].join('\n')
+  );
+}
+
+async function main() {
+  if (!(await exists(path.join(distDir, 'index.html')))) {
+    throw new Error(
+      `Client build not found at ${path.join(distDir, 'index.html')}. Run "vite build" first.`
+    );
+  }
+
+  const ssrEntry = await resolveSsrEntry();
+  console.log(`using SSR bundle ${path.relative(root, ssrEntry)}`);
 
   const templatePath = path.join(distDir, 'index.html');
   const template = await readFile(templatePath, 'utf8');
@@ -63,6 +99,13 @@ async function main() {
   // Vite bakes VITE_SITE_URL and VITE_NOINDEX into this bundle from both `.env`
   // files and the shell environment, so use that as the single source of truth.
   const ssr = await import(pathToFileURL(ssrEntry).href);
+
+  if (typeof ssr.renderAllPages !== 'function' || typeof ssr.isIndexableBuild !== 'function') {
+    throw new Error(
+      `SSR bundle at ${ssrEntry} does not export the expected prerender API (renderAllPages, isIndexableBuild).`
+    );
+  }
+
   const indexable = ssr.isIndexableBuild();
   const noindexRequested = !indexable;
   const pages = ssr.renderAllPages(indexable);

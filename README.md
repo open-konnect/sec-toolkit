@@ -193,7 +193,7 @@ See [`AGENT.md`](./AGENT.md) for full step-by-step instructions, type definition
 ## 💻 Local Development
 
 ### Prerequisites
-- Node.js >= 18.0.0
+- Node.js >= 20.0.0 (`.nvmrc` pins Node 22 for Cloudflare Pages)
 - npm >= 9.0.0
 
 ### Setup & Run
@@ -237,10 +237,10 @@ The build runs four steps:
 
 1. `tsc` type-check
 2. `vite build` for the client bundle
-3. `vite build --ssr src/seo/prerender.tsx` for the prerender bundle
+3. `npm run build:ssr` (`vite build --config vite.ssr.config.ts`) for the prerender bundle at `dist-ssr/prerender.js`
 4. `node scripts/generate-seo.mjs` to write static HTML for every route, `sitemap.xml`, `robots.txt`, `404.html`, and preview headers when requested
 
-The production output is generated in `dist/`.
+The production output is generated in `dist/`. `dist-ssr/` is a build-time intermediate only; it is not deployed and does not need a runtime server. The SSR config pins the entry (`src/seo/prerender.tsx`), output directory (`dist-ssr`), entry filename (`prerender.js`), and Node target so the generator always imports the same file.
 
 ### Verify the generated output locally
 
@@ -260,12 +260,24 @@ This project requires **zero backend servers**, databases, or container infrastr
 - **Framework Preset**: `Vite`
 - **Build Command**: `npm run build`
 - **Build Output Directory**: `dist`
+- **Node.js version**: `22` (from `.nvmrc`; the v3 build image default is Node 22)
 - **Production branch**: `main` (or your chosen branch)
 - **Environment variables**: set `VITE_SITE_URL` to your custom domain
+
+The build command must remain the full `npm run build`. `node scripts/generate-seo.mjs` is not standalone: it requires both the client build in `dist/` and the prerender bundle at `dist-ssr/prerender.js` produced by `npm run build:ssr`.
 
 Cloudflare Pages serves `dist/<slug>.html` at the extensionless URL `/<slug>` and redirects `.html` requests to the extensionless form. The build therefore writes real HTML files instead of relying on an SPA fallback rewrite. Do **not** add a `/* /index.html 200` `_redirects` rule: it would serve the home page for every tool URL and hide the prerendered pages from crawlers.
 
 `dist/404.html` is used automatically for unknown paths. The production `dist/robots.txt` allows crawling and references the sitemap.
+
+If you deploy manually with Wrangler instead of Git integration, build first and then upload the static output directory:
+
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name <your-pages-project>
+```
+
+Use `wrangler pages deploy` for Pages. Do not use `npx wrangler deploy`: that deploys a Worker and is not the deployment command for this static Pages site.
 
 ### Custom domain and Search Console
 
