@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ToolCategory = 'security' | 'data' | 'developer' | 'ai';
+export type ToolCategory = 'security' | 'encoding' | 'data' | 'developer' | 'ai';
 
 export interface CategoryInfo {
   id: ToolCategory;
@@ -33,7 +33,10 @@ export interface ToolDefinition {
   description: string;
   category: ToolCategory;
   badge?: string;
+  featured?: boolean;
+  iconName?: string;
   keywords: string[];
+  relatedTools?: string[];
   component: React.LazyExoticComponent<React.ComponentType> | React.ComponentType;
   seo: {
     title: string;

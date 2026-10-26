@@ -8,7 +8,10 @@ export const uuidMetadata: Omit<ToolDefinition, 'component'> = {
   description: 'Generate RFC 4122 compliant UUID v4 identifiers locally in your browser. Powered by native Web Crypto (crypto.randomUUID) for 122 bits of true cryptographic entropy.',
   category: 'developer',
   badge: 'CSPRNG Powered',
+  featured: false,
+  iconName: 'Fingerprint',
   keywords: ['uuid', 'uuid generator', 'guid generator', 'uuid v4', 'rfc 4122', 'random uuid', 'bulk uuid', 'crypto.randomuuid'],
+  relatedTools: ['timestamp-converter', 'cron-generator', 'hash-generator'],
   seo: {
     title: 'UUID Generator — Cryptographically Secure UUID v4 (CSPRNG)',
     description: 'Generate single or bulk RFC 4122 Version 4 UUIDs directly in your browser. Built with native crypto.randomUUID for maximum entropy and zero server uploads.',

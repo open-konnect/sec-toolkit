@@ -6,9 +6,12 @@ export const base64Metadata: Omit<ToolDefinition, 'component'> = {
   name: 'Base64 Encoder / Decoder',
   shortDescription: 'Encode and decode standard Base64 and URL-safe Base64URL strings with guaranteed UTF-8 character and emoji support.',
   description: 'Convert plaintext to Base64 and Base64 to plaintext directly inside your browser. Supports both RFC 4648 standard base64 and url-safe Base64URL formatting with full international UTF-8 support.',
-  category: 'data',
+  category: 'encoding',
   badge: 'Core Utility',
+  featured: true,
+  iconName: 'Binary',
   keywords: ['base64', 'base64 encode', 'base64 decode', 'base64url', 'utf-8 base64', 'binary to text', 'rfc 4648'],
+  relatedTools: ['url-encoder', 'jwt-decoder', 'hash-generator'],
   seo: {
     title: 'Base64 & Base64URL Encoder / Decoder — Privacy-First Converter',
     description: 'Fast, browser-based Base64 and Base64URL encoder and decoder. Converts UTF-8 text, international characters, and binary formats locally with zero server transmission.',

@@ -8,7 +8,10 @@ export const jwtMetadata: Omit<ToolDefinition, 'component'> = {
   description: 'A privacy-first, 100% client-side JWT decoder and security analyzer. Safely inspect JOSE headers, payload claims, and signatures without sending credentials over the network.',
   category: 'security',
   badge: 'Flagship Tool',
+  featured: true,
+  iconName: 'Shield',
   keywords: ['jwt', 'json web token', 'jwt decoder', 'jwt analyzer', 'jwt security', 'token validator', 'claims inspector'],
+  relatedTools: ['jwt-generator', 'json-formatter', 'base64', 'hash-generator'],
   seo: {
     title: 'JWT Decoder & Security Analyzer — Privacy-First Token Inspector',
     description: 'Decode, inspect, and analyze JSON Web Tokens (JWT) locally in your browser. Perform automated security checks for alg:none, expiration, and key misuse without transmitting data.',

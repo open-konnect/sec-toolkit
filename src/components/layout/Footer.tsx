@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
+import { TOOL_CATEGORIES } from '../../tools/registry';
 
 export const Footer: React.FC = () => {
   return (
@@ -16,48 +17,69 @@ export const Footer: React.FC = () => {
               <span className="font-bold text-sm text-white">Developer Security Toolkit</span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed max-w-md">
-              Free, privacy-first developer utilities that run entirely in your browser.
-              No tokens, keys, or data are ever transmitted to remote servers, logged, or retained.
+              Fast, private, browser-based utilities for developers, security engineers, and AI builders.
+              All data processing happens locally in your browser. Zero tracking, zero storage, zero server calls.
             </p>
             <div className="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs text-slate-300">
-              <span className="font-semibold text-emerald-400">Zero-Backend Architecture:</span> Everything is processed locally via native Web APIs, Web Crypto, and JavaScript.
+              <span className="font-semibold text-emerald-400">Privacy Guarantee:</span> Your data stays in your browser. No account required.
             </div>
           </div>
 
-          {/* Tools */}
+          {/* Popular Tools */}
           <div>
             <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-300 mb-3">
-              Initial Release Tools
+              Popular Tools
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <Link to="/jwt-decoder" className="text-slate-400 hover:text-emerald-400 transition-colors">
-                  JWT Decoder & Security Analyzer
+                  JWT Decoder & Analyzer
+                </Link>
+              </li>
+              <li>
+                <Link to="/json-formatter" className="text-slate-400 hover:text-emerald-400 transition-colors">
+                  JSON Formatter & Validator
+                </Link>
+              </li>
+              <li>
+                <Link to="/hash-generator" className="text-slate-400 hover:text-emerald-400 transition-colors">
+                  Hash Generator (SHA-256)
                 </Link>
               </li>
               <li>
                 <Link to="/base64" className="text-slate-400 hover:text-emerald-400 transition-colors">
-                  Base64 & Base64URL Converter
+                  Base64 & Base64URL
                 </Link>
               </li>
               <li>
-                <Link to="/uuid-generator" className="text-slate-400 hover:text-emerald-400 transition-colors">
-                  Cryptographic UUID Generator
+                <Link to="/regex-tester" className="text-slate-400 hover:text-emerald-400 transition-colors">
+                  Regex Tester
+                </Link>
+              </li>
+              <li>
+                <Link to="/timestamp-converter" className="text-slate-400 hover:text-emerald-400 transition-colors">
+                  Unix Timestamp Converter
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Architecture & Future Categories */}
+          {/* Categories */}
           <div>
             <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-300 mb-3">
-              Planned Categories
+              Tool Categories
             </h4>
-            <ul className="space-y-1.5 text-xs text-slate-400">
-              <li>• Security & Cryptography</li>
-              <li>• Data Transformation & Formatting</li>
-              <li>• Developer Utilities</li>
-              <li>• AI & LLM Token Calculators</li>
+            <ul className="space-y-2 text-xs">
+              {TOOL_CATEGORIES.map((cat) => (
+                <li key={cat.id}>
+                  <Link
+                    to={`/?category=${cat.id}`}
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

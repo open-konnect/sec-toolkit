@@ -1,7 +1,9 @@
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import { getToolBySlug } from '../tools/registry';
+import { getToolBySlug, getRelatedTools } from '../tools/registry';
 import { ToolHeader } from '../components/tool/ToolHeader';
+import { Breadcrumbs } from '../components/tool/Breadcrumbs';
+import { RelatedTools } from '../components/tool/RelatedTools';
 import { EducationalSection } from '../components/tool/EducationalSection';
 import { SEOHead } from '../components/tool/SEOHead';
 import { ToolDefinition } from '../types';
@@ -21,6 +23,7 @@ export const ToolPage: React.FC<ToolPageProps> = ({ toolDefinition: propTool }) 
   }
 
   const ToolComponent = tool.component;
+  const related = getRelatedTools(tool.id);
 
   return (
     <div className="space-y-8">
@@ -32,6 +35,9 @@ export const ToolPage: React.FC<ToolPageProps> = ({ toolDefinition: propTool }) 
         keywords={tool.keywords}
         faqs={tool.educationalContent?.faqs}
       />
+
+      {/* Breadcrumb Navigation */}
+      <Breadcrumbs category={tool.category} toolName={tool.name} />
 
       {/* Tool Header */}
       <ToolHeader
@@ -50,6 +56,9 @@ export const ToolPage: React.FC<ToolPageProps> = ({ toolDefinition: propTool }) 
       {tool.educationalContent && (
         <EducationalSection data={tool.educationalContent} />
       )}
+
+      {/* Related Tools Discovery Section */}
+      <RelatedTools tools={related} currentToolName={tool.name} />
     </div>
   );
 };
