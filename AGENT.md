@@ -39,7 +39,10 @@ npm test
 # Run tests in watch mode
 npm run test:watch
 
-# Build production bundle (runs tsc && vite build)
+# Refresh the build-time LLM pricing catalog
+npm run fetch:llm-models
+
+# Build production bundle (runs tsc, catalog fetch, client + SSR builds, and SEO generation)
 npm run build
 
 # Preview production build locally
@@ -75,9 +78,14 @@ npm run preview
 ```text
 sec-toolkit/
 ├── public/
+│   ├── data/
+│   │   └── llm-models.json   # Generated LLM pricing catalog served locally to the browser
 │   └── og-image.png          # Social sharing image (og-image.svg is the source)
 ├── scripts/
-│   └── generate-seo.mjs      # Prerender, sitemap, robots, preview headers
+│   ├── fetch-llm-models.mjs  # Build-time LiteLLM catalog refresh with previous-dataset fallback
+│   ├── generate-seo.mjs      # Prerender, sitemap, robots, preview headers
+│   └── lib/
+│       └── llm-models.mjs    # Provider/model/pricing normalization, dedupe, validation
 ├── src/
 │   ├── app/
 │   │   ├── App.tsx           # BrowserRouter mount
@@ -111,7 +119,10 @@ sec-toolkit/
 │   │   ├── csp-generator/    # CSP header builder with security audit warnings
 │   │   ├── security-headers/ # HSTS, nosniff, X-Frame, COOP, CORP — Nginx/Apache/Cloudflare export
 │   │   ├── password-strength/ # Entropy analysis, pattern detection (passwords never transmitted)
-│   │   └── llm-token-calculator/ # BPE token estimation, editable pricing, 6 model presets
+│   │   └── llm-token-calculator/ # BPE token estimation, catalog pricing, cached input, period estimates
+│   ├── data/
+│   │   ├── popularModels.json # Quick-pick model IDs validated during the catalog build
+│   │   └── popularModels.ts   # Typed wrapper around the popular model configuration
 │   ├── types/
 │   │   └── index.ts          # Shared TypeScript contracts: ToolDefinition, ToolCategory, etc.
 │   ├── vite-env.d.ts         # Vite client types
@@ -130,7 +141,8 @@ sec-toolkit/
 │   ├── json-to-typescript.test.ts
 │   ├── csp-generator.test.ts
 │   ├── password-strength.test.ts
-│   └── llm-token-calculator.test.ts
+│   ├── llm-token-calculator.test.ts
+│   └── llm-token-calculator-catalog.test.ts
 ├── AGENT.md                  # This file — full architecture guide for AI agents
 ├── CLAUDE.md                 # Compact quick-reference for Claude/AI assistants
 ├── README.md                 # User-facing documentation
@@ -269,10 +281,10 @@ When asked to add a new tool (e.g. `sql-formatter`, `whois-lookup`):
 
 ---
 
-## 8. Cloudflare Pages Deployment Note
+## 8. Cloudflare Deployment Note
 
-Cloudflare Pages serves the static output from `dist/`. The build prerenders the home page, five category pages, all 15 tool pages, and `404.html`, and generates `sitemap.xml` and `robots.txt`.
+Cloudflare serves the static output from `dist/`. The build prerenders the home page, five category pages, all 15 tool pages, and `404.html`, and generates `sitemap.xml` and `robots.txt`.
 
-Cloudflare Pages serves `dist/<slug>.html` at the extensionless URL `/<slug>` and redirects `.html` requests to the extensionless form. Do not add a `/* /index.html 200` `_redirects` rule: it would serve the home page for every route and prevent crawlers from seeing the prerendered tool content.
+Cloudflare serves `dist/<slug>.html` at the extensionless URL `/<slug>` and redirects `.html` requests to the extensionless form. Do not add a `/* /index.html 200` rewrite: it would serve the home page for every route and prevent crawlers from seeing the prerendered tool content.
 
-Set `VITE_SITE_URL` to the production custom domain. Set `VITE_NOINDEX=true` only for preview/staging builds; production must leave it unset. See `README.md` for the full deployment and Search Console checklist.
+Set `VITE_SITE_URL` to the production origin. The current production origin is `https://sec-toolkit.konnect-open.workers.dev`. Set `VITE_NOINDEX=true` only for preview/staging builds; production must leave it unset. See `README.md` for the full deployment and Search Console checklist.

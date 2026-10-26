@@ -173,7 +173,9 @@ export function buildSeoHead(seo: PageSeo, options: BuildSeoHeadOptions = {}): S
     twitterDescription: seo.description || SITE_DESCRIPTION,
     twitterImage: ogImage,
     ...(SITE_TWITTER_HANDLE ? { twitterSite: SITE_TWITTER_HANDLE } : {}),
-    ...(GOOGLE_SITE_VERIFICATION ? { googleSiteVerification: GOOGLE_SITE_VERIFICATION } : {}),
+    ...(GOOGLE_SITE_VERIFICATION && seo.kind === 'home'
+      ? { googleSiteVerification: GOOGLE_SITE_VERIFICATION }
+      : {}),
     structuredData: buildStructuredData(seo)
   };
 }

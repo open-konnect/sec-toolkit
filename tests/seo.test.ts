@@ -8,8 +8,13 @@ import {
   getToolPageSeo,
   NOT_FOUND_SEO
 } from '../src/seo/pages';
-import { buildSeoHead } from '../src/seo/head';
-import { absoluteUrl, normalizePath, SITE_URL } from '../src/seo/config';
+import { buildSeoHead, serializeSeoHead } from '../src/seo/head';
+import {
+  GOOGLE_SITE_VERIFICATION,
+  absoluteUrl,
+  normalizePath,
+  SITE_URL
+} from '../src/seo/config';
 
 const EXPECTED_SLUGS = [
   'jwt-decoder',
@@ -151,6 +156,18 @@ describe('head tag generation', () => {
     expect(head.robots).toBe('index, follow');
     expect(head.ogUrl).toBe(head.canonical);
     expect(head.ogImage.startsWith('https://')).toBe(true);
+  });
+
+  it('emits the Google Search Console verification tag on the home page only', () => {
+    const home = buildSeoHead(getHomePageSeo());
+    expect(GOOGLE_SITE_VERIFICATION).toBe('L-4k9wlFruyGLL_hdaVZkiHidnWt1iiQWWchxlSEryY');
+    expect(home.googleSiteVerification).toBe(GOOGLE_SITE_VERIFICATION);
+    expect(serializeSeoHead(home)).toContain(
+      '<meta name="google-site-verification" content="L-4k9wlFruyGLL_hdaVZkiHidnWt1iiQWWchxlSEryY">'
+    );
+
+    expect(buildSeoHead(getToolPageSeo(REGISTERED_TOOLS[0])).googleSiteVerification).toBeUndefined();
+    expect(buildSeoHead(getCategoryPageSeo(TOOL_CATEGORIES[0])).googleSiteVerification).toBeUndefined();
   });
 
   it('keeps canonical URLs clean even when given query strings or trailing slashes', () => {

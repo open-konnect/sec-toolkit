@@ -8,8 +8,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && npm run build:ssr && node scripts/generate-seo.mjs",
+    "build": "tsc && npm run fetch:llm-models && vite build && npm run build:ssr && node scripts/generate-seo.mjs",
     "build:ssr": "vite build --config vite.ssr.config.ts",
+    "fetch:llm-models": "node scripts/fetch-llm-models.mjs",
     "preview": "npm run build && wrangler dev",
     "test": "vitest run",
     "test:watch": "vitest",

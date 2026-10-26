@@ -3,7 +3,7 @@ import { StaticRouter } from 'react-router-dom';
 import { AppRoutes } from '../app/routes';
 import { getPrerenderPages, NOT_FOUND_SEO, PageSeo } from './pages';
 import { buildSeoHead, serializeSeoHead } from './head';
-import { SITE_INDEXABLE } from './config';
+import { SITE_INDEXABLE, SITE_URL } from './config';
 
 export interface PrerenderedPage {
   path: string;
@@ -47,7 +47,7 @@ export function getSitemapPaths(): string[] {
 }
 
 export function getSiteUrlForSitemap(): string {
-  return (import.meta.env.VITE_SITE_URL || 'https://securitytoolkit.dev').replace(/\/+$/, '');
+  return SITE_URL;
 }
 
 /**

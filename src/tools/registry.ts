@@ -219,31 +219,36 @@ export const TOOL_CATEGORIES: CategoryInfo[] = [
   {
     id: 'ai',
     name: 'AI',
-    description: 'Privacy-first token counting, context-window calculation, and LLM cost estimation.',
+    description: 'Privacy-first token counting, context-window calculation, and catalog-backed LLM cost estimation.',
     iconName: 'Sparkles',
     seoTitle: 'AI Tools — LLM Token & Cost Calculator',
     seoDescription:
-      'Estimate LLM token counts, context-window usage, and API costs locally in your browser. Adjust model pricing without sending prompts to a provider.',
+      'Estimate LLM token counts from a real prompt and sample response, then compare cached input, context-window usage, and API costs locally in your browser. Browse catalog models without sending text anywhere.',
     intro:
-      'AI utilities for planning prompts, context budgets, and API spend. Estimates are intentionally approximate and prompts are never sent to a model provider by this site.',
+      'AI utilities for planning prompts, context budgets, and API spend. Model pricing comes from a catalog refreshed during the build, and prompts are never sent to a model provider by this site.',
     educationalContent: {
       title: 'Planning LLM Token Budgets',
-      subtitle: 'Estimate prompt size and cost before you send a request.',
+      subtitle: 'Estimate real prompt and response usage, then plan the cost.',
       content: [
         {
           heading: 'Tokens are not words',
           body:
-            'Language models tokenize text into sub-word units. Common English words may be one token, while code, punctuation, and non-English scripts often use more. The LLM Token & Cost Calculator uses a local heuristic to estimate input and output tokens.'
+            'Language models tokenize text into sub-word units. Common English words may be one token, while code, punctuation, and non-English scripts often use more. The LLM Token & Cost Calculator estimates both sides of an actual interaction: paste the prompt you sent and a sample response you received, and the same local heuristic measures each one.'
         },
         {
-          heading: 'Why estimates differ between models',
+          heading: 'Catalog pricing changes over time',
           body:
-            'Each provider uses a different tokenizer and vocabulary, and pricing changes over time. The calculator exposes editable input and output rates so you can match your current contract or provider pricing rather than relying on a fixed table.'
+            'Each provider uses a different tokenizer and vocabulary, and list prices change frequently. The calculator refreshes its model catalog during the build, displays the date of the last successful refresh, and supports cached-input rates where a provider publishes them.'
+        },
+        {
+          heading: 'Compare models before you commit',
+          body:
+            'The same token counts can cost very different amounts across frontier, small, and open-weight models. Switch providers, search the catalog, and compare input, output, cached, daily, and monthly estimates before choosing a default model for a feature.'
         },
         {
           heading: 'Keep prompts and data local',
           body:
-            'Prompts can contain source code, customer data, or internal documentation. Token counting and cost estimation happen in your browser; the prompt is not sent to OpenAI, Anthropic, Google, or any other API.'
+            'Prompts and responses can contain source code, customer data, or internal documentation. Token counting and cost estimation happen in your browser; neither text is sent to OpenAI, Anthropic, Google, or any other API.'
         }
       ],
       faqs: [
@@ -253,9 +258,14 @@ export const TOOL_CATEGORIES: CategoryInfo[] = [
             'No. They are approximate heuristics. Use the provider’s tokenizer or usage response when you need exact billing numbers.'
         },
         {
-          question: 'Can I update the model pricing?',
+          question: 'Where does the model pricing come from?',
           answer:
-            'Yes. The input and output rates are editable, so you can reflect current list prices, enterprise discounts, or batch rates.'
+            'The site fetches the public LiteLLM model cost map during the build, normalizes it, and serves a static catalog. The calculator shows the date of the last successful refresh so you can judge how current the prices are.'
+        },
+        {
+          question: 'Can I estimate cached-input costs?',
+          answer:
+            'Yes, for models that publish a cached-input rate. Enter how many of the input tokens were cached and the calculator bills the cached portion separately from uncached input.'
         }
       ]
     }

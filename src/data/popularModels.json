@@ -1,0 +1,12 @@
+[
+  { "id": "openai/gpt-5", "label": "GPT-5" },
+  { "id": "anthropic/claude-sonnet-4-5", "label": "Claude Sonnet 4.5" },
+  { "id": "google/gemini-2.5-pro", "label": "Gemini 2.5 Pro" },
+  { "id": "deepseek/deepseek-chat", "label": "DeepSeek Chat" },
+  { "id": "google/gemini-2.5-flash", "label": "Gemini 2.5 Flash" },
+  { "id": "openai/gpt-5-mini", "label": "GPT-5 Mini" },
+  { "id": "mistral/mistral-large-latest", "label": "Mistral Large" },
+  { "id": "xai/grok-4.5", "label": "Grok 4.5" },
+  { "id": "cohere/command-a-03-2025", "label": "Command A" },
+  { "id": "together-ai/meta-llama/Llama-3.3-70B-Instruct-Turbo", "label": "Llama 3.3 70B" }
+]

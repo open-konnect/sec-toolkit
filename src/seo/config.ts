@@ -1,12 +1,12 @@
 /**
  * Central SEO configuration.
  *
- * The production URL is configured with VITE_SITE_URL. Use the custom domain
- * (for example https://securitytoolkit.dev), not a temporary *.pages.dev
- * hostname, so canonical URLs and the sitemap stay stable.
+ * The production origin is configured with VITE_SITE_URL. Set it to the exact
+ * hostname users visit (for example https://sec-toolkit.konnect-open.workers.dev)
+ * so canonical URLs and the sitemap stay stable.
  */
 
-const FALLBACK_SITE_URL = 'https://securitytoolkit.dev';
+const FALLBACK_SITE_URL = 'https://sec-toolkit.konnect-open.workers.dev';
 
 function readEnv(value: string | undefined): string {
   return typeof value === 'string' ? value.trim() : '';
@@ -21,7 +21,17 @@ export const SITE_DESCRIPTION =
 export const SITE_URL = (readEnv(import.meta.env.VITE_SITE_URL) || FALLBACK_SITE_URL).replace(/\/+$/, '');
 export const SITE_OG_IMAGE_PATH = readEnv(import.meta.env.VITE_OG_IMAGE) || '/og-image.png';
 export const SITE_TWITTER_HANDLE = readEnv(import.meta.env.VITE_TWITTER_HANDLE);
-export const GOOGLE_SITE_VERIFICATION = readEnv(import.meta.env.VITE_GOOGLE_SITE_VERIFICATION);
+
+/**
+ * Google Search Console HTML-tag verification value.
+ *
+ * The production token is stored here so ownership verification works without
+ * requiring an environment variable. VITE_GOOGLE_SITE_VERIFICATION can still
+ * override it for a different property.
+ */
+const DEFAULT_GOOGLE_SITE_VERIFICATION = 'L-4k9wlFruyGLL_hdaVZkiHidnWt1iiQWWchxlSEryY';
+export const GOOGLE_SITE_VERIFICATION =
+  readEnv(import.meta.env.VITE_GOOGLE_SITE_VERIFICATION) || DEFAULT_GOOGLE_SITE_VERIFICATION;
 
 /**
  * Set VITE_NOINDEX=true for preview/staging builds. Production builds must
@@ -33,7 +43,7 @@ function getSiteHostname(): string {
   try {
     return new URL(SITE_URL).hostname.toLowerCase();
   } catch {
-    return 'securitytoolkit.dev';
+    return new URL(FALLBACK_SITE_URL).hostname.toLowerCase();
   }
 }
 
@@ -70,8 +80,9 @@ export function absoluteAssetUrl(path: string): string {
 
 /**
  * Only the configured production hostname should be indexed.
- * Cloudflare preview deployments live on *.pages.dev and must not compete with
- * the canonical production site. Localhost is never indexable.
+ * Preview deployments live on different hostnames (for example other
+ * *.workers.dev or *.pages.dev subdomains) and must not compete with the
+ * canonical production site. Localhost is never indexable.
  */
 export function isIndexableHostname(hostname: string): boolean {
   const host = hostname.toLowerCase();

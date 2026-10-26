@@ -60,7 +60,7 @@ All data processing happens **locally inside the user's browser**:
 
 | Tool | Route | Description |
 |------|-------|-------------|
-| LLM Token Calculator | `/llm-token-calculator` | Estimate token counts and API costs for 6 popular LLM model presets |
+| LLM Token Calculator | `/llm-token-calculator` | Estimate token, cached-input, and daily/monthly API costs from a build-refreshed catalog of thousands of models |
 
 ---
 
@@ -71,9 +71,14 @@ The application is architected around an isolated **Tool Registry pattern**. Ind
 ```text
 sec-toolkit/
 ├── public/
+│   ├── data/
+│   │   └── llm-models.json   # Generated LLM pricing catalog (served locally, never fetched by the browser)
 │   └── og-image.png          # 1200×630 social sharing image (og-image.svg is the source)
 ├── scripts/
-│   └── generate-seo.mjs      # Prerenders route HTML, sitemap.xml, robots.txt, preview headers
+│   ├── fetch-llm-models.mjs  # Build-time refresh of the LiteLLM pricing catalog with fallback
+│   ├── generate-seo.mjs      # Prerenders route HTML, sitemap.xml, robots.txt, preview headers
+│   └── lib/
+│       └── llm-models.mjs    # Shared provider/model/pricing normalization and validation
 ├── src/
 │   ├── app/
 │   │   ├── App.tsx           # Router provider and app entry point
@@ -112,10 +117,13 @@ sec-toolkit/
 │   │   ├── csp-generator/    # CSP Generator
 │   │   ├── security-headers/ # Security Headers
 │   │   ├── password-strength/ # Password Strength Analyzer
-│   │   └── llm-token-calculator/ # LLM Token Calculator
+│   │   └── llm-token-calculator/ # Catalog-backed LLM Token Calculator
+│   ├── data/
+│   │   ├── popularModels.json # Quick-pick model IDs validated during the catalog build
+│   │   └── popularModels.ts   # Typed wrapper around the popular model configuration
 │   └── types/
 │       └── index.ts          # ToolDefinition, ToolCategory and shared types
-├── tests/                    # Unit tests for all 15 tools plus SEO regression tests
+├── tests/                    # Unit tests for all 15 tools, catalog logic, build fallback, and SEO
 ├── .env.example              # Documented public SEO configuration variables
 ├── AGENT.md                  # Full architecture guide for AI coding agents
 ├── CLAUDE.md                 # Quick-reference for AI assistants
@@ -162,15 +170,15 @@ cp .env.example .env
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `VITE_SITE_URL` | Recommended | Production origin used for canonicals, Open Graph URLs, and `sitemap.xml`. Use the custom domain, not a preview hostname. Defaults to `https://securitytoolkit.dev`. |
+| `VITE_SITE_URL` | Recommended | Production origin used for canonicals, Open Graph URLs, and `sitemap.xml`. Use the exact production hostname. Defaults to `https://sec-toolkit.konnect-open.workers.dev`. |
 | `VITE_OG_IMAGE` | Optional | Social image path or absolute URL. Defaults to `/og-image.png`. |
 | `VITE_TWITTER_HANDLE` | Optional | Twitter/X handle, including `@`, added as `twitter:site`. |
 | `VITE_GOOGLE_SITE_VERIFICATION` | Optional | Google Search Console HTML-tag verification value (the `content` value only). |
 | `VITE_NOINDEX` | Preview only | Set to `true` for preview/staging builds to emit `noindex` metadata, a disallow-all `robots.txt`, and `X-Robots-Tag` headers. Never set this for production. |
 
-The client also refuses to index non-production hostnames such as `localhost` and `*.pages.dev`, so an accidental preview deployment does not compete with the canonical domain even if `VITE_NOINDEX` is omitted.
+The client also refuses to index any hostname other than the configured production hostname, including `localhost` and alternate `*.workers.dev`/`*.pages.dev` previews, so an accidental preview deployment does not compete with the canonical site even if `VITE_NOINDEX` is omitted.
 
-Set `VITE_SITE_URL` to the exact origin users will visit, including the `www` or apex hostname you intend to keep. The client-side indexability guard only allows that hostname, so redirect the alternate hostname to it in Cloudflare rather than serving the same build on both.
+Set `VITE_SITE_URL` to the exact origin users will visit, including the `www`, apex, or `workers.dev` hostname you intend to keep. The client-side indexability guard only allows that hostname, so redirect alternate hostnames to it in Cloudflare rather than serving the same build on more than one.
 
 ---
 
@@ -233,12 +241,15 @@ npm run test:watch
 npm run build
 ```
 
-The build runs four steps:
+The build runs five steps:
 
 1. `tsc` type-check
-2. `vite build` for the client bundle
-3. `npm run build:ssr` (`vite build --config vite.ssr.config.ts`) for the prerender bundle at `dist-ssr/prerender.js`
-4. `node scripts/generate-seo.mjs` to write static HTML for every route, `sitemap.xml`, `robots.txt`, `404.html`, and preview headers when requested
+2. `npm run fetch:llm-models` to refresh `public/data/llm-models.json` from the public LiteLLM model cost map
+3. `vite build` for the client bundle
+4. `npm run build:ssr` (`vite build --config vite.ssr.config.ts`) for the prerender bundle at `dist-ssr/prerender.js`
+5. `node scripts/generate-seo.mjs` to write static HTML for every route, `sitemap.xml`, `robots.txt`, `404.html`, and preview headers when requested
+
+The catalog refresh is a build-time Node fetch; the browser only loads the resulting `/data/llm-models.json` from this site. If the refresh fails and a valid catalog already exists, the build keeps that file byte-for-byte, preserves its `fetchedAt` date, prints a warning, and continues. If no valid catalog exists, the build fails with instructions. You can refresh manually with `npm run fetch:llm-models`. To choose the quick-pick models, edit `src/data/popularModels.json`; missing IDs produce a build warning and are omitted from the UI rather than failing the build.
 
 The production output is generated in `dist/`. `dist-ssr/` is a build-time intermediate only; it is not deployed and does not need a runtime server. The SSR config pins the entry (`src/seo/prerender.tsx`), output directory (`dist-ssr`), entry filename (`prerender.js`), and Node target so the generator always imports the same file.
 
@@ -252,52 +263,53 @@ Check `dist/sitemap.xml`, `dist/robots.txt`, and a tool page such as `dist/jwt-d
 
 ---
 
-## ☁️ Deployment: GitHub → Cloudflare Pages
+## ☁️ Deployment: GitHub → Cloudflare
 
-This project requires **zero backend servers**, databases, or container infrastructure.
+This project requires **zero backend servers**, databases, or container infrastructure. It can be served as a static site by Cloudflare Pages or Workers Static Assets.
 
-**Cloudflare Pages Build Settings:**
+**Cloudflare build settings:**
 - **Framework Preset**: `Vite`
 - **Build Command**: `npm run build`
-- **Build Output Directory**: `dist`
+- **Deploy Command**: `npx wrangler deploy` (Workers Builds)
+- **Build Output Directory**: `dist` (Pages)
 - **Node.js version**: `22` (from `.nvmrc`; the v3 build image default is Node 22)
 - **Production branch**: `main` (or your chosen branch)
-- **Environment variables**: set `VITE_SITE_URL` to your custom domain
+- **Environment variables**: set `VITE_SITE_URL=https://sec-toolkit.konnect-open.workers.dev`
 
 The build command must remain the full `npm run build`. `node scripts/generate-seo.mjs` is not standalone: it requires both the client build in `dist/` and the prerender bundle at `dist-ssr/prerender.js` produced by `npm run build:ssr`.
 
-Cloudflare Pages serves `dist/<slug>.html` at the extensionless URL `/<slug>` and redirects `.html` requests to the extensionless form. The build therefore writes real HTML files instead of relying on an SPA fallback rewrite. Do **not** add a `/* /index.html 200` `_redirects` rule: it would serve the home page for every tool URL and hide the prerendered pages from crawlers.
+Cloudflare serves `dist/<slug>.html` at the extensionless URL `/<slug>` and redirects `.html` requests to the extensionless form. The build therefore writes real HTML files instead of relying on an SPA fallback rewrite. Do **not** add a `/* /index.html 200` rewrite or SPA fallback: it would serve the home page for every tool URL and hide the prerendered pages from crawlers.
 
-`dist/404.html` is used automatically for unknown paths. The production `dist/robots.txt` allows crawling and references the sitemap.
+`wrangler.jsonc` configures `assets.html_handling` as `"auto-trailing-slash"` and `assets.not_found_handling` as `"404-page"`, so `dist/jwt-decoder.html` is served at `/jwt-decoder` and unknown paths serve `dist/404.html` with a 404 status. The production `dist/robots.txt` allows crawling and references the sitemap.
 
-If you deploy manually with Wrangler instead of Git integration, build first and then upload the static output directory:
+This repository is deployed as a Cloudflare Worker with static assets. `@cloudflare/vite-plugin` writes the deployable config to `dist/wrangler.json`, and `.wrangler/deploy/config.json` points Wrangler at it:
 
 ```bash
-npm run build
-npx wrangler pages deploy dist --project-name <your-pages-project>
+npm run deploy
+# equivalent to: npm run build && npx wrangler deploy
 ```
 
-Use `wrangler pages deploy` for Pages. Do not use `npx wrangler deploy`: that deploys a Worker and is not the deployment command for this static Pages site.
+Do not use `wrangler pages deploy` for this project; it targets a Pages project, not the Worker configured in `wrangler.jsonc`.
 
 ### Custom domain and Search Console
 
-1. Add the custom domain in **Cloudflare Pages → Custom domains** and wait for DNS/SSL to become active.
-2. Set `VITE_SITE_URL` to that exact origin, including `https://` and without a trailing slash, then redeploy.
-3. Open `https://your-domain/sitemap.xml` and confirm all 21 URLs use the custom domain.
-4. In [Google Search Console](https://search.google.com/search-console), add a **URL-prefix** or **Domain** property, complete verification, and submit `https://your-domain/sitemap.xml`.
+1. Optionally attach a custom domain in Cloudflare and wait for DNS/SSL to become active.
+2. The current production origin is `https://sec-toolkit.konnect-open.workers.dev`. If you attach a custom domain, set `VITE_SITE_URL` to that exact origin, including `https://` and without a trailing slash, then redeploy.
+3. Open `https://sec-toolkit.konnect-open.workers.dev/sitemap.xml` and confirm all 21 URLs use the production origin.
+4. In [Google Search Console](https://search.google.com/search-console), add a **URL-prefix** or **Domain** property, complete verification, and submit `https://sec-toolkit.konnect-open.workers.dev/sitemap.xml`.
 5. Use **URL Inspection** on the home page and a few tool pages, then request indexing.
 6. In Bing Webmaster Tools, add the site and submit the same sitemap.
 7. Optionally set `VITE_GOOGLE_SITE_VERIFICATION` to the Search Console HTML-tag value and redeploy instead of using DNS verification.
 
 ### Preview deployments
 
-Cloudflare preview URLs look like `<branch>.<project>.pages.dev`. They are useful for review but should never be indexed. Set `VITE_NOINDEX=true` for preview builds (Cloudflare allows per-environment variables) so the build emits:
+Cloudflare preview deployments use a different hostname from production (for example `<branch>.<project>.pages.dev` for Pages or a versioned `*.workers.dev` hostname for Workers). They are useful for review but should never be indexed. Set `VITE_NOINDEX=true` for preview builds (Cloudflare allows per-environment variables) so the build emits:
 
 - `<meta name="robots" content="noindex, nofollow">`
 - a disallow-all `robots.txt`
 - an `X-Robots-Tag` header in `dist/_headers`
 
-Leave `VITE_NOINDEX` unset for the production branch. Even without it, the client-side indexability guard refuses to index `localhost` and `*.pages.dev`, but `VITE_NOINDEX=true` also protects the static HTML before JavaScript runs.
+Leave `VITE_NOINDEX` unset for the production branch. Even without it, the client-side indexability guard refuses to index `localhost` and any hostname other than the configured production hostname, but `VITE_NOINDEX=true` also protects the static HTML before JavaScript runs.
 
 ---
 
