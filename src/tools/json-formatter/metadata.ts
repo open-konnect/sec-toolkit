@@ -13,8 +13,8 @@ export const jsonFormatterMetadata: Omit<ToolDefinition, 'component'> = {
   keywords: ['json', 'json formatter', 'json prettifier', 'json validator', 'json minifier', 'json parser', 'beautify json'],
   relatedTools: ['json-to-typescript', 'jwt-decoder', 'base64'],
   seo: {
-    title: 'JSON Formatter & Validator — Free Privacy-First Prettifier',
-    description: 'Format, validate, and minify JSON data directly in your browser. Get clear syntax error locations with zero data sent to external servers.',
+    title: "JSON Formatter & Validator",
+    description: "Format, validate, beautify, and minify JSON directly in your browser. Quickly find syntax errors and copy clean JSON without uploading your data.",
     canonicalPath: '/json-formatter'
   },
   educationalContent: {
@@ -27,7 +27,16 @@ export const jsonFormatterMetadata: Omit<ToolDefinition, 'component'> = {
       },
       {
         heading: 'Common JSON Syntax Errors',
-        body: 'The most frequent causes of JSON parsing failures are trailing commas after the last property or array item, unquoted keys, single quotes instead of double quotes, and unescaped control characters or backslashes.'
+        body: 'The most frequent causes of JSON parsing failures are trailing commas after the last property or array item, unquoted keys, single quotes instead of double quotes, and unescaped control characters or backslashes. JSON also does not support comments, so // or /* */ blocks must be removed before parsing.',
+        codeExample: '// Invalid JSON\n{\n  name: \'Alice\',\n  "age": 30,\n  "roles": ["admin",],\n}\n\n// Valid JSON\n{\n  "name": "Alice",\n  "age": 30,\n  "roles": ["admin"]\n}'
+      },
+      {
+        heading: 'Valid JSON values',
+        body: 'A JSON document contains one value: an object, array, string, number, boolean, or null. Objects use string keys and colon-separated values; arrays are ordered lists. Strings must use double quotes, numbers cannot contain leading zeros or NaN/Infinity, and dates are represented as strings such as "2026-01-01T00:00:00Z".'
+      },
+      {
+        heading: 'JSON vs JavaScript objects',
+        body: 'JSON is a data format; JavaScript object literals are executable source code. A JavaScript object can contain comments, single-quoted strings, methods, undefined, Date instances, and computed keys, none of which are valid JSON. Use JSON.parse for untrusted data rather than eval or Function, and remember that JSON.parse does not execute code.'
       },
       {
         heading: 'Prettifying vs. Minification',
@@ -42,6 +51,14 @@ export const jsonFormatterMetadata: Omit<ToolDefinition, 'component'> = {
       {
         question: 'Is my JSON uploaded to any server or database?',
         answer: 'No. All parsing, validation, and formatting runs locally inside your browser tab.'
+      },
+      {
+        question: 'Why is my JSON invalid?',
+        answer: 'The most common causes are trailing commas, single-quoted strings, unquoted object keys, comments, and unescaped control characters. The validator reports the failing line and column so you can correct the exact location.'
+      },
+      {
+        question: 'What is the difference between JSON and a JavaScript object?',
+        answer: 'JSON is a strict text data format with double-quoted keys and no comments, functions, undefined, or Date objects. A JavaScript object is executable source code and can contain all of those, which is why copying an object literal into a JSON parser often fails.'
       }
     ]
   }

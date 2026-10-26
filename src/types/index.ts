@@ -7,6 +7,10 @@ export interface CategoryInfo {
   name: string;
   description: string;
   iconName: string;
+  seoTitle: string;
+  seoDescription: string;
+  intro: string;
+  educationalContent: EducationalSectionData;
 }
 
 export interface FaqItem {

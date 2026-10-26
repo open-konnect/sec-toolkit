@@ -1,6 +1,10 @@
+import React from 'react';
 import { uuidMetadata } from './metadata';
-import { UuidTool } from './components/UuidTool';
 import { ToolDefinition } from '../../types';
+
+const UuidTool = React.lazy(() =>
+  import('./components/UuidTool').then((module) => ({ default: module.UuidTool }))
+);
 
 export const uuidToolDefinition: ToolDefinition = {
   ...uuidMetadata,

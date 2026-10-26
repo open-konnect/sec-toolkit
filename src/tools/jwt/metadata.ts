@@ -13,8 +13,8 @@ export const jwtMetadata: Omit<ToolDefinition, 'component'> = {
   keywords: ['jwt', 'json web token', 'jwt decoder', 'jwt analyzer', 'jwt security', 'token validator', 'claims inspector'],
   relatedTools: ['jwt-generator', 'json-formatter', 'base64', 'hash-generator'],
   seo: {
-    title: 'JWT Decoder & Security Analyzer — Privacy-First Token Inspector',
-    description: 'Decode, inspect, and analyze JSON Web Tokens (JWT) locally in your browser. Perform automated security checks for alg:none, expiration, and key misuse without transmitting data.',
+    title: "JWT Decoder & Security Analyzer",
+    description: "Decode and analyze JWT tokens directly in your browser. Inspect headers, payloads, claims, expiry, and common security issues without uploading your token.",
     canonicalPath: '/jwt-decoder'
   },
   educationalContent: {
@@ -39,6 +39,18 @@ export const jwtMetadata: Omit<ToolDefinition, 'component'> = {
         body: 'Common claims include "iss" (issuer), "sub" (subject/user identifier), "aud" (audience/intended recipient), "exp" (expiration epoch), "nbf" (not before epoch), "iat" (issued at epoch), and "jti" (unique token ID to prevent replays).'
       },
       {
+        heading: 'Claims in practice: exp, nbf, iat, iss, aud',
+        body: '"exp", "nbf", and "iat" are NumericDate values measured in seconds since the Unix epoch. "exp" is the last moment the token may be accepted; "nbf" is the earliest; "iat" records when it was issued. "iss" identifies the issuer and "aud" identifies the intended recipient. A decoder can display these values, but only the verifying service can enforce them. A signature-valid token with a past "exp" must still be rejected.'
+      },
+      {
+        heading: 'Common JWT security mistakes',
+        body: 'Frequent mistakes include accepting "alg": "none", trusting the algorithm named in the token header without an allowlist, using a weak or shared HS256 secret, skipping "iss" and "aud" validation, issuing long-lived access tokens, storing tokens where XSS can read them, and placing sensitive data in the payload. Remember that the header and payload are only Base64URL-encoded and are readable by anyone holding the token.'
+      },
+      {
+        heading: 'Expired tokens and clock skew',
+        body: 'Expiration is enforced by the verifier, not by the browser. This analyzer can show that "exp" is in the past, but it cannot refresh or validate the token. In distributed systems, allow a small clock skew (often 30–60 seconds) between the issuer and verifier, and use short-lived access tokens with rotating refresh tokens that can be revoked server-side.'
+      },
+      {
         heading: 'The "alg: none" Vulnerability',
         body: 'The JWT specification permits unsigned tokens when the header indicates "alg": "none". Historically, flawed validation libraries accepted unsigned tokens if an attacker changed "alg" to "none" and removed the signature, granting them unauthorized administrative privileges. Modern backends must explicitly reject "none".'
       },
@@ -48,6 +60,22 @@ export const jwtMetadata: Omit<ToolDefinition, 'component'> = {
       }
     ],
     faqs: [
+      {
+        question: 'Can I decode a JWT without the secret?',
+        answer: 'Yes. The header and payload are Base64URL-encoded JSON, so anyone with the token can read them without a key. The signature cannot be verified or forged without the correct secret or private key.'
+      },
+      {
+        question: 'Is it safe to paste a JWT into this tool?',
+        answer: 'Decoding happens entirely in your browser and the token is not uploaded. Still, treat any JWT as a credential: use synthetic or short-lived test tokens when possible, and avoid pasting long-lived production tokens into a shared or untrusted device.'
+      },
+      {
+        question: 'What does the exp claim mean?',
+        answer: '"exp" is the expiration time as a NumericDate in seconds since the Unix epoch. A verifier must reject the token once the current time is later than "exp", even if the signature is valid.'
+      },
+      {
+        question: 'Why does my token show as expired?',
+        answer: 'The "exp" value is in the past relative to your device clock. The token cannot be repaired by decoding it again; request a new access token from the issuer or refresh it through your normal authentication flow.'
+      },
       {
         question: 'Does this tool send my JWT to any remote server or database?',
         answer: 'No. All parsing, base64 decoding, timestamp calculations, and security heuristics run entirely within your local browser JavaScript engine. No network requests are made with your token.'

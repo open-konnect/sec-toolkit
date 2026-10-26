@@ -13,8 +13,8 @@ export const llmTokenCalculatorMetadata: Omit<ToolDefinition, 'component'> = {
   keywords: ['llm token calculator', 'token counter', 'openai pricing', 'claude pricing', 'gemini pricing', 'token estimator', 'cost calculator', 'llm cost'],
   relatedTools: ['json-formatter', 'regex-tester', 'json-to-typescript'],
   seo: {
-    title: 'LLM Token & Cost Calculator — Estimate Tokens & API Pricing',
-    description: 'Calculate input and output token costs across OpenAI, Anthropic, and Google models locally in your browser. Fully customizable pricing rates with zero API calls.',
+    title: "LLM Token & Cost Calculator",
+    description: "Estimate token counts and API costs for popular language models in your browser. Adjust pricing and output size without sending prompts to a provider.",
     canonicalPath: '/llm-token-calculator'
   },
   educationalContent: {
@@ -32,6 +32,18 @@ export const llmTokenCalculatorMetadata: Omit<ToolDefinition, 'component'> = {
       {
         heading: 'Why Token Estimation Matters',
         body: 'API pricing is billed per million tokens (input and output separately). Estimating prompt size prevents unexpected bill shocks, helps architects design efficient context windows, and informs chunking strategies for Retrieval-Augmented Generation (RAG).'
+      },
+      {
+        heading: 'Input tokens, output tokens, and context windows',
+        body: 'Input tokens are the prompt, system instructions, retrieved documents, and conversation history sent to the model. Output tokens are the generated completion. Both count toward the model’s context window, so a large prompt leaves less room for the answer. Leave headroom for the completion and for any tool-call metadata; providers may truncate or reject requests that exceed the limit.'
+      },
+      {
+        heading: 'Why the estimate is approximate',
+        body: 'This calculator uses a local character-and-word heuristic, not the provider’s tokenizer. Code, JSON, punctuation, emoji, and non-English scripts often tokenize differently than English prose. Treat the result as a planning estimate, and use the usage object returned by the API when you need exact billing numbers.'
+      },
+      {
+        heading: 'Pricing is configurable, not permanent',
+        body: 'List prices change, and providers offer cached-input, batch, and enterprise rates that differ from the defaults. The input and output rates are editable so you can match your current contract. Output tokens usually cost more than input tokens, so a small change in the requested completion length can have a larger effect than trimming a few prompt words.'
       }
     ],
     faqs: [
@@ -42,6 +54,14 @@ export const llmTokenCalculatorMetadata: Omit<ToolDefinition, 'component'> = {
       {
         question: 'Can I update the pricing if an AI provider drops their rates?',
         answer: 'Yes! The $/1M token input and output rates are completely editable in the interface so you can adjust them to reflect current prices, custom enterprise tiers, or batch discounts.'
+      },
+      {
+        question: 'Why do token counts differ between models?',
+        answer: 'Each provider uses a different tokenizer and vocabulary. The same sentence, especially code or non-English text, can produce different token counts across GPT, Claude, and Gemini models.'
+      },
+      {
+        question: 'Is the cost estimate exact?',
+        answer: 'No. It is a planning estimate based on approximate token counts and the rates you enter. Use the provider’s usage response and current pricing for invoices or budget commitments.'
       }
     ]
   }

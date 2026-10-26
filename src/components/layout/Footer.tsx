@@ -26,10 +26,10 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Popular Tools */}
-          <div>
-            <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-300 mb-3">
+          <nav aria-labelledby="footer-popular-heading">
+            <h2 id="footer-popular-heading" className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-300 mb-3">
               Popular Tools
-            </h4>
+            </h2>
             <ul className="space-y-2 text-xs">
               <li>
                 <Link to="/jwt-decoder" className="text-slate-400 hover:text-emerald-400 transition-colors">
@@ -62,18 +62,18 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
 
           {/* Categories */}
-          <div>
-            <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-300 mb-3">
+          <nav aria-labelledby="footer-categories-heading">
+            <h2 id="footer-categories-heading" className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-300 mb-3">
               Tool Categories
-            </h4>
+            </h2>
             <ul className="space-y-2 text-xs">
               {TOOL_CATEGORIES.map((cat) => (
                 <li key={cat.id}>
                   <Link
-                    to={`/?category=${cat.id}`}
+                    to={`/${cat.id}`}
                     className="text-slate-400 hover:text-emerald-400 transition-colors"
                   >
                     {cat.name}
@@ -81,7 +81,7 @@ export const Footer: React.FC = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
         </div>
 
         {/* Bottom bar */}

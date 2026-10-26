@@ -75,8 +75,9 @@ npm run preview
 ```text
 sec-toolkit/
 ├── public/
-│   ├── _redirects            # Cloudflare Pages SPA rewrite (/* /index.html 200)
-│   └── robots.txt            # Search engine directives
+│   └── og-image.png          # Social sharing image (og-image.svg is the source)
+├── scripts/
+│   └── generate-seo.mjs      # Prerender, sitemap, robots, preview headers
 ├── src/
 │   ├── app/
 │   │   ├── App.tsx           # BrowserRouter mount
@@ -90,9 +91,10 @@ sec-toolkit/
 │   │   ├── formatting/       # Timestamp conversions, duration math, clipboard copy
 │   │   └── security/         # Safe Base64/JSON parsers, safeBase64Encode, base64ToBase64Url, input size limits
 │   ├── pages/
-│   │   ├── HomePage.tsx      # Tool directory with featured section, category filter (?category=), search, privacy guarantee
-│   │   ├── ToolPage.tsx      # Dynamic tool renderer with Breadcrumbs, RelatedTools, SEO
-│   │   └── NotFoundPage.tsx  # 404 handler with quick navigation
+│   │   ├── HomePage.tsx      # Tool directory, featured section, search, privacy guarantee
+│   │   ├── CategoryPage.tsx  # Category landing pages (security, encoding, data, developer, ai)
+│   │   ├── ToolPage.tsx      # Tool shell with Breadcrumbs, RelatedTools, docs, lazy UI
+│   │   └── NotFoundPage.tsx  # noindex 404 handler with quick navigation
 │   ├── tools/
 │   │   ├── registry.ts       # Central tool registry: REGISTERED_TOOLS, TOOL_CATEGORIES, getFeaturedTools(), getToolById(), getRelatedTools()
 │   │   ├── jwt/              # JWT Decoder & Analyzer (components, logic, types, metadata)
@@ -269,8 +271,8 @@ When asked to add a new tool (e.g. `sql-formatter`, `whois-lookup`):
 
 ## 8. Cloudflare Pages Deployment Note
 
-Cloudflare Pages serves the static output from `dist/`. The single-page app rewrite is handled by `public/_redirects`:
-```text
-/* /index.html 200
-```
-This guarantees direct URL navigation to any tool (`/jwt-decoder`, `/base64`, `/uuid-generator`, `/hash-generator`, etc.) works seamlessly without server-side routing.
+Cloudflare Pages serves the static output from `dist/`. The build prerenders the home page, five category pages, all 15 tool pages, and `404.html`, and generates `sitemap.xml` and `robots.txt`.
+
+Cloudflare Pages serves `dist/<slug>.html` at the extensionless URL `/<slug>` and redirects `.html` requests to the extensionless form. Do not add a `/* /index.html 200` `_redirects` rule: it would serve the home page for every route and prevent crawlers from seeing the prerendered tool content.
+
+Set `VITE_SITE_URL` to the production custom domain. Set `VITE_NOINDEX=true` only for preview/staging builds; production must leave it unset. See `README.md` for the full deployment and Search Console checklist.

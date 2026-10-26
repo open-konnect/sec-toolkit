@@ -3,8 +3,9 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { Layout } from '../components/layout/Layout';
 import { HomePage } from '../pages/HomePage';
 import { ToolPage } from '../pages/ToolPage';
+import { CategoryPage } from '../pages/CategoryPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
-import { REGISTERED_TOOLS } from '../tools/registry';
+import { REGISTERED_TOOLS, TOOL_CATEGORIES } from '../tools/registry';
 import { analytics } from '../lib/analytics';
 
 /**
@@ -28,7 +29,14 @@ export const AppRoutes: React.FC = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
 
-        {/* Explicit canonical routes for initial tools */}
+        {TOOL_CATEGORIES.map((category) => (
+          <Route
+            key={category.id}
+            path={`/${category.id}`}
+            element={<CategoryPage categoryId={category.id} />}
+          />
+        ))}
+
         {REGISTERED_TOOLS.map((tool) => (
           <Route
             key={tool.id}
@@ -37,10 +45,6 @@ export const AppRoutes: React.FC = () => {
           />
         ))}
 
-        {/* Dynamic fallback route for future registered tools */}
-        <Route path="/:slug" element={<ToolPage />} />
-
-        {/* 404 Route */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Layout>

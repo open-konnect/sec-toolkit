@@ -13,8 +13,8 @@ export const base64Metadata: Omit<ToolDefinition, 'component'> = {
   keywords: ['base64', 'base64 encode', 'base64 decode', 'base64url', 'utf-8 base64', 'binary to text', 'rfc 4648'],
   relatedTools: ['url-encoder', 'jwt-decoder', 'hash-generator'],
   seo: {
-    title: 'Base64 & Base64URL Encoder / Decoder — Privacy-First Converter',
-    description: 'Fast, browser-based Base64 and Base64URL encoder and decoder. Converts UTF-8 text, international characters, and binary formats locally with zero server transmission.',
+    title: "Base64 Encoder & Decoder",
+    description: "Encode and decode Base64 text directly in your browser. Fast, private, and useful for debugging tokens, API data, and encoded strings.",
     canonicalPath: '/base64'
   },
   educationalContent: {
@@ -35,6 +35,14 @@ export const base64Metadata: Omit<ToolDefinition, 'component'> = {
         body: 'The legacy browser window.btoa and window.atob functions only operate on Latin-1 (binary) strings. Passing multi-byte Unicode characters (such as emojis, Cyrillic, Chinese, or Arabic) triggers an unhandled Character Out of Range exception. This tool utilizes native TextEncoder and TextDecoder to ensure proper multi-byte UTF-8 encoding.'
       },
       {
+        heading: 'Common developer use cases',
+        body: 'Base64 appears in data URLs, email MIME attachments, HTTP Basic authentication headers, JSON fields that must carry binary data, and JWT header/payload segments (using Base64URL). It is also useful when debugging strings that look like random characters in logs or API responses. In every case, the value is reversible with or without a key.'
+      },
+      {
+        heading: 'Why Base64 does not provide confidentiality',
+        body: 'Base64 changes representation, not access. Anyone who receives a Base64 string can decode it using a browser console or a standard library. Do not use Base64 to hide API keys, passwords, personal data, or other secrets; use encryption with proper key management, and never put secrets in URLs or client-side storage.'
+      },
+      {
         heading: 'Is Base64 Encryption?',
         body: 'No. Base64 is strictly an encoding format designed for safe data transmission across text-only protocols (such as email MIME or JSON payloads). It provides zero confidentiality and can be decoded by anyone without a key.'
       }
@@ -51,6 +59,10 @@ export const base64Metadata: Omit<ToolDefinition, 'component'> = {
       {
         question: 'Is my data transmitted to your server when encoding or decoding?',
         answer: 'No. All conversions execute strictly inside your local browser tab using client-side JavaScript. No data is sent across the network.'
+      },
+      {
+        question: 'Is Base64 safe for passwords or API keys?',
+        answer: 'No. Base64 is reversible by anyone and provides no encryption or access control. Use a password manager for credentials and a secrets manager for API keys; never rely on Base64 to protect them.'
       }
     ]
   }

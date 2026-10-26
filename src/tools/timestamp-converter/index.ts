@@ -1,6 +1,10 @@
+import React from 'react';
 import { timestampConverterMetadata } from './metadata';
-import { TimestampConverterTool } from './components/TimestampConverterTool';
 import { ToolDefinition } from '../../types';
+
+const TimestampConverterTool = React.lazy(() =>
+  import('./components/TimestampConverterTool').then((module) => ({ default: module.TimestampConverterTool }))
+);
 
 export const timestampConverterToolDefinition: ToolDefinition = {
   ...timestampConverterMetadata,

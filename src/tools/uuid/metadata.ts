@@ -3,7 +3,7 @@ import { ToolDefinition } from '../../types';
 export const uuidMetadata: Omit<ToolDefinition, 'component'> = {
   id: 'uuid-generator',
   slug: 'uuid-generator',
-  name: 'Cryptographic UUID Generator',
+  name: "UUID Generator",
   shortDescription: 'Generate cryptographically secure Version 4 UUIDs using native browser CSPRNG facilities with bulk generation and formatting options.',
   description: 'Generate RFC 4122 compliant UUID v4 identifiers locally in your browser. Powered by native Web Crypto (crypto.randomUUID) for 122 bits of true cryptographic entropy.',
   category: 'developer',
@@ -13,8 +13,8 @@ export const uuidMetadata: Omit<ToolDefinition, 'component'> = {
   keywords: ['uuid', 'uuid generator', 'guid generator', 'uuid v4', 'rfc 4122', 'random uuid', 'bulk uuid', 'crypto.randomuuid'],
   relatedTools: ['timestamp-converter', 'cron-generator', 'hash-generator'],
   seo: {
-    title: 'UUID Generator — Cryptographically Secure UUID v4 (CSPRNG)',
-    description: 'Generate single or bulk RFC 4122 Version 4 UUIDs directly in your browser. Built with native crypto.randomUUID for maximum entropy and zero server uploads.',
+    title: "UUID v4 Generator — Random UUIDs",
+    description: "Generate RFC 4122 version 4 UUIDs directly in your browser. Create single or bulk random IDs with no account, no upload, and no tracking.",
     canonicalPath: '/uuid-generator'
   },
   educationalContent: {
@@ -37,6 +37,14 @@ export const uuidMetadata: Omit<ToolDefinition, 'component'> = {
       {
         heading: 'Standard String Representation',
         body: 'A canonical UUID is formatted as a 36-character hexadecimal string with four hyphens dividing it into five groups of 8, 4, 4, 4, and 12 characters: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx (where y is 8, 9, a, or b).'
+      },
+      {
+        heading: 'Common uses for UUID v4',
+        body: 'UUIDs are useful for database primary keys in distributed systems, idempotency keys, request and correlation IDs, public-facing resource identifiers, file names, and test fixtures. Because they can be generated without coordinating with a central sequence, multiple services can create IDs independently without blocking.'
+      },
+      {
+        heading: 'UUID vs sequential IDs',
+        body: 'Sequential integer IDs are compact and index well, but they can reveal record counts and make enumeration easier. Random UUIDs are non-sequential and unguessable, at the cost of 16 bytes of storage and less B-tree locality. If you need both randomness and time-ordered sorting, consider UUID v7 or ULID rather than v4.'
       }
     ],
     faqs: [
@@ -51,6 +59,10 @@ export const uuidMetadata: Omit<ToolDefinition, 'component'> = {
       {
         question: 'What is the difference between UUID and GUID?',
         answer: 'Globally Unique Identifier (GUID) is Microsoft’s implementation and naming convention for the UUID standard. In modern software engineering, the terms UUID and GUID are generally interchangeable.'
+      },
+      {
+        question: 'Are UUID v4 values sortable?',
+        answer: 'No. UUID v4 values are random, so they do not sort by creation time. Use UUID v7 or ULID when you need time-ordered identifiers with good database index locality.'
       }
     ]
   }

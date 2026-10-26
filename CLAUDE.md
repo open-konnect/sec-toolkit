@@ -12,7 +12,7 @@ For full architectural details, see [`AGENT.md`](./AGENT.md).
 - **Dev**: `npm run dev` (starts local server on port 5173)
 - **Test**: `npm test` (Vitest single run)
 - **Test Watch**: `npm run test:watch`
-- **Build**: `npm run build` (runs `tsc` and `vite build` into `dist/`)
+- **Build**: `npm run build` (runs `tsc`, the client build, the SSR prerender build, and the SEO generator into `dist/`)
 - **Preview**: `npm run preview`
 
 ---

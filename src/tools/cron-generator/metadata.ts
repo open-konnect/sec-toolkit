@@ -13,8 +13,8 @@ export const cronGeneratorMetadata: Omit<ToolDefinition, 'component'> = {
   keywords: ['cron', 'cron generator', 'cron expression', 'crontab', 'schedule generator', 'cron parser', 'scheduled tasks'],
   relatedTools: ['timestamp-converter', 'uuid-generator', 'regex-tester'],
   seo: {
-    title: 'Cron Expression Generator — Build & Explain Crontab Schedules',
-    description: 'Construct and understand 5-part cron expressions visually in your browser. Get plain-English explanations and next execution times instantly.',
+    title: "Cron Expression Generator",
+    description: "Build and understand cron expressions in your browser. Get a plain-English explanation and upcoming run times for standard five-field schedules.",
     canonicalPath: '/cron-generator'
   },
   educationalContent: {
@@ -32,6 +32,23 @@ export const cronGeneratorMetadata: Omit<ToolDefinition, 'component'> = {
       {
         heading: 'Special Characters',
         body: '• * (Asterisk): Matches all possible values for that field.\n• , (Comma): Separates distinct items (e.g. 1,15,30).\n• - (Hyphen): Defines an inclusive range (e.g. 1-5 for Monday through Friday).\n• / (Slash): Specifies step intervals (e.g. */15 for every 15 minutes).'
+      },
+      {
+        heading: 'Common cron examples',
+        body: 'Read a schedule left to right: minute, hour, day of month, month, day of week. These examples are safe starting points; adapt the command and time zone to your platform.',
+        codeExample: '*/5 * * * *      every 5 minutes\n0 * * * *        every hour at minute 0\n0 2 * * *        daily at 02:00\n30 9 * * 1-5     weekdays at 09:30\n0 0 1 * *        first day of every month\n0 0 * * 0        every Sunday at midnight'
+      },
+      {
+        heading: 'Day-of-month and day-of-week semantics',
+        body: 'In traditional cron, when both day-of-month and day-of-week are restricted (neither is *), the job runs when either field matches, not only when both match. This OR behavior surprises many users. If you need a specific date that is also a specific weekday, express the date in day-of-month and keep day-of-week as *, or enforce the condition inside the job itself.'
+      },
+      {
+        heading: 'Dialect differences are not cosmetic',
+        body: 'Linux/Unix crontab, GitHub Actions, and Kubernetes CronJob use five fields. Quartz uses six or seven fields with seconds first and supports ? for "no specific value." Spring’s scheduler commonly uses six fields with seconds. AWS EventBridge uses six fields with a year field and does not support all POSIX operators. Copying an expression between platforms without checking the dialect can shift every run time.'
+      },
+      {
+        heading: 'Time zones and missed runs',
+        body: 'Cron evaluates against the daemon’s configured time zone, which is often UTC on servers. If a job seems to run at the wrong local hour, check the time zone before changing the expression. Cron does not catch up on runs missed while the scheduler was down; use a persistent job queue when every execution must be processed.'
       }
     ],
     faqs: [
@@ -42,6 +59,14 @@ export const cronGeneratorMetadata: Omit<ToolDefinition, 'component'> = {
       {
         question: 'Are my generated cron expressions sent to a remote service?',
         answer: 'No. All parsing and scheduling projections run entirely in your local browser.'
+      },
+      {
+        question: 'What does */5 * * * * mean?',
+        answer: 'It runs every five minutes: the minute field uses a step of 5, and every other field matches all values. The first execution is at minute 0, then 5, 10, and so on.'
+      },
+      {
+        question: 'Why does my cron job run at the wrong time?',
+        answer: 'The scheduler’s time zone is usually different from your local time zone. Check whether the daemon uses UTC or a configured zone, and convert the intended local time before editing the expression.'
       }
     ]
   }

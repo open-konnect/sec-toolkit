@@ -1,6 +1,10 @@
+import React from 'react';
 import { urlEncoderMetadata } from './metadata';
-import { UrlEncoderTool } from './components/UrlEncoderTool';
 import { ToolDefinition } from '../../types';
+
+const UrlEncoderTool = React.lazy(() =>
+  import('./components/UrlEncoderTool').then((module) => ({ default: module.UrlEncoderTool }))
+);
 
 export const urlEncoderToolDefinition: ToolDefinition = {
   ...urlEncoderMetadata,

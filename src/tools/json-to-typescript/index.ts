@@ -1,6 +1,10 @@
+import React from 'react';
 import { jsonToTypescriptMetadata } from './metadata';
-import { JsonToTypescriptTool } from './components/JsonToTypescriptTool';
 import { ToolDefinition } from '../../types';
+
+const JsonToTypescriptTool = React.lazy(() =>
+  import('./components/JsonToTypescriptTool').then((module) => ({ default: module.JsonToTypescriptTool }))
+);
 
 export const jsonToTypescriptToolDefinition: ToolDefinition = {
   ...jsonToTypescriptMetadata,
