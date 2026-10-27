@@ -36,7 +36,7 @@ For full architectural details, see [`AGENT.md`](./AGENT.md).
 ## Core Architecture Principles
 
 1. **100% Client-Side Privacy**: No user inputs (tokens, Base64 strings, keys, secrets, passwords) may ever be sent over the network, stored in cookies, or logged.
-2. **Static Only**: Deployable to Cloudflare Pages. Zero backend (no Node/Express server, database, or serverless functions).
+2. **Static Only, one exception**: Deployable to Cloudflare. Zero backend (no Node/Express server, database, or persistent storage) except the stateless fetch relay in `worker/` (`POST /api/fetch`), used only by Website Security Posture because browsers cannot read other sites' pages or headers. It must stay stateless, log nothing, accept only public http(s) hostnames, and never be given any other tool's input.
 3. **Tool Registry Pattern**:
    - Every tool lives in its own directory: `src/tools/<tool-name>/`
    - Split `logic/` (pure, testable TypeScript) from `components/` (React UI)

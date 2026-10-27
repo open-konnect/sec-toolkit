@@ -11,7 +11,7 @@ Welcome, AI coding assistant or autonomous agent. This document provides complet
 ### Core Ethos & Non-Negotiable Rules:
 - **100% Client-Side Processing**: All processing occurs strictly inside the user's browser using native Web APIs (`crypto.subtle`, `crypto.randomUUID()`, `crypto.getRandomValues()`, `TextEncoder`, `TextDecoder`, `JSON.parse`).
 - **Zero Data Transmission**: User inputs (tokens, Base64 strings, keys, secrets, passwords) **must never** be uploaded to any server, stored in cookies, or sent to telemetry/analytics.
-- **Static Frontend Only**: Built using React, TypeScript, Vite, and Tailwind CSS. Deployable to Cloudflare Pages as a static site (`npm run build` produces `dist/`). Zero backend servers, Express, Docker, Redis, or serverless functions.
+- **Static Frontend Only**: Built using React, TypeScript, Vite, and Tailwind CSS. Deployable to Cloudflare Pages as a static site (`npm run build` produces `dist/`). Zero backend servers, Express, Docker or Redis. The one exception is the stateless fetch relay in `worker/` (`POST /api/fetch`) that the Website Security Posture tool uses to read other sites' pages and headers; it stores and logs nothing.
 - **Defensive Engineering**: Protect against browser freezing and crashes using input size limits (`validateInputSize`) and safe parsers (`safeJsonParse`, `safeBase64Decode`). Never use `eval()` or `dangerouslySetInnerHTML`.
 
 ---

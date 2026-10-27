@@ -7,6 +7,7 @@ import { jwtGeneratorToolDefinition } from './jwt-generator';
 import { cspGeneratorToolDefinition } from './csp-generator';
 import { securityHeadersToolDefinition } from './security-headers';
 import { passwordStrengthToolDefinition } from './password-strength';
+import { websitePostureToolDefinition } from './website-posture';
 
 import { base64ToolDefinition } from './base64';
 import { urlEncoderToolDefinition } from './url-encoder';
@@ -273,16 +274,17 @@ export const TOOL_CATEGORIES: CategoryInfo[] = [
 ];
 
 /**
- * The 15 Registered Tools
+ * The 16 Registered Tools
  */
 export const REGISTERED_TOOLS: ToolDefinition[] = [
-  // Security (6)
+  // Security (7)
   jwtToolDefinition,
   hashGeneratorToolDefinition,
   jwtGeneratorToolDefinition,
   cspGeneratorToolDefinition,
   securityHeadersToolDefinition,
   passwordStrengthToolDefinition,
+  websitePostureToolDefinition,
 
   // Encoding (2)
   base64ToolDefinition,

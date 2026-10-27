@@ -16,7 +16,9 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const distDir = path.join(root, 'dist');
+// The Cloudflare Vite plugin writes the client build to dist/client (the Worker
+// that serves /api/fetch goes next to it); wrangler serves assets from there.
+const distDir = path.join(root, 'dist', 'client');
 const ssrDir = path.join(root, 'dist-ssr');
 
 // `vite.ssr.config.ts` pins the entry filename to `prerender.js`. Keep the
@@ -133,7 +135,7 @@ async function main() {
 
     const outputPath = path.join(distDir, page.outputFile);
     await writeFile(outputPath, html, 'utf8');
-    console.log(`prerendered ${page.path} -> dist/${page.outputFile}`);
+    console.log(`prerendered ${page.path} -> dist/client/${page.outputFile}`);
   }
 
   // sitemap.xml

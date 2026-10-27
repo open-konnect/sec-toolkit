@@ -265,7 +265,7 @@ Check `dist/sitemap.xml`, `dist/robots.txt`, and a tool page such as `dist/jwt-d
 
 ## ☁️ Deployment: GitHub → Cloudflare
 
-This project requires **zero backend servers**, databases, or container infrastructure. It can be served as a static site by Cloudflare Pages or Workers Static Assets.
+This project requires **no backend servers**, databases, or container infrastructure. It is served by Cloudflare Workers Static Assets. A small stateless Worker (`worker/`) handles only `POST /api/fetch`, the passive fetch relay the Website Security Posture tool uses to read other sites' pages and response headers (browsers block this). It follows redirects manually, accepts only public hostnames on ports 80/443, caps time and size, and stores nothing. Everything else is static.
 
 **Cloudflare build settings:**
 - **Framework Preset**: `Vite`

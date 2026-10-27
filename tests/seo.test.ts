@@ -23,6 +23,7 @@ const EXPECTED_SLUGS = [
   'csp-generator',
   'security-headers',
   'password-strength',
+  'website-security-posture',
   'base64',
   'url-encoder',
   'json-formatter',
@@ -35,10 +36,10 @@ const EXPECTED_SLUGS = [
 ];
 
 describe('tool registry SEO metadata', () => {
-  it('registers exactly the 15 expected tools with unique slugs', () => {
-    expect(REGISTERED_TOOLS).toHaveLength(15);
+  it('registers exactly the 16 expected tools with unique slugs', () => {
+    expect(REGISTERED_TOOLS).toHaveLength(16);
     expect(REGISTERED_TOOLS.map((tool) => tool.slug).sort()).toEqual([...EXPECTED_SLUGS].sort());
-    expect(new Set(REGISTERED_TOOLS.map((tool) => tool.slug)).size).toBe(15);
+    expect(new Set(REGISTERED_TOOLS.map((tool) => tool.slug)).size).toBe(16);
   });
 
   it('has a unique title and description per tool', () => {
@@ -100,10 +101,10 @@ describe('tool registry SEO metadata', () => {
 });
 
 describe('page SEO definitions', () => {
-  it('includes the home page, five categories, and all 15 tools exactly once', () => {
+  it('includes the home page, five categories, and all 16 tools exactly once', () => {
     const paths = getAllIndexablePaths();
-    expect(paths).toHaveLength(21);
-    expect(new Set(paths).size).toBe(21);
+    expect(paths).toHaveLength(22);
+    expect(new Set(paths).size).toBe(22);
     expect(paths).toContain('/');
     expect(paths).toContain('/security');
     expect(paths).toContain('/encoding');
